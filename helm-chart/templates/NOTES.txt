@@ -1,0 +1,14 @@
+PA Expunger has been deployed.
+
+{{- if .Values.ingress.enabled }}
+{{- range .Values.ingress.hosts }}
+Application URL: https://{{ .host }}/
+{{- end }}
+{{- else }}
+Ingress is disabled. Access the app with:
+  kubectl port-forward svc/{{ .Release.Name }}-backend-svc 8080:{{ .Values.service.port }} -n {{ .Release.Namespace }}
+then browse to http://localhost:8080/
+{{- end }}
+
+Check rollout status with:
+  kubectl rollout status deployment/{{ .Release.Name }}-backend -n {{ .Release.Namespace }}

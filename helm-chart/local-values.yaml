@@ -1,0 +1,37 @@
+postgres:
+  persistence:
+    size: 1Gi
+
+backend:
+  image:
+    repository: pa_expunger-backend
+    tag: "local-test"
+    pullPolicy: Never
+
+  allowedHosts:
+    extra:
+      - "localhost"
+
+  config:
+    DJANGO_LOG_LEVEL: "DEBUG"
+
+# Left empty so pa-expunger.backendApiUrl derives it from the first ingress host below
+# ("https://localhost"). This value only feeds prod.py's CSRF_TRUSTED_ORIGINS -- a wrong
+# value here silently breaks admin/session POSTs, not API calls (the frontend is same-origin
+# and doesn't read this).
+apiUrlOverride: ""
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  hosts:
+    - host: "localhost"
+  tls:
+    - secretName: "pa-expunger-local-tls"
+      hosts:
+        - "localhost"
+
+secrets:
+  create: true
